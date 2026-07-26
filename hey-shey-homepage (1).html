@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hey Shey — Streetwear</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#000000;
+    --lime:#AEEA00;
+    --white:#FFFFFF;
+    --hair: rgba(255,255,255,0.14);
+    --hair-soft: rgba(255,255,255,0.07);
+    --ease: cubic-bezier(.16,.8,.24,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--black);
+    color:var(--white);
+    font-family:'DM Sans', sans-serif;
+    font-weight:300;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--lime); color:var(--black);}
+  .mono{font-family:'JetBrains Mono', monospace; letter-spacing:0.1em;}
+  .display{font-family:'Bebas Neue', sans-serif; text-transform:uppercase; letter-spacing:0.01em;}
+  a{color:inherit; text-decoration:none;}
+  img,svg{display:block;}
+  .wrap{max-width:1440px; margin:0 auto; padding:0 48px;}
+
+  /* reveal-on-scroll */
+  .reveal{opacity:0; transform:translateY(24px); transition:opacity .3s var(--ease), transform .3s var(--ease);}
+  .reveal.in{opacity:1; transform:translateY(0);}
+
+  /* ---------- NAV ---------- */
+  .nav{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:26px 48px;
+    transition:background .4s var(--ease), padding .4s var(--ease), border-color .4s var(--ease);
+    border-bottom:1px solid transparent;
+  }
+  .nav.scrolled{background:rgba(0,0,0,0.94); backdrop-filter:blur(10px); padding:16px 48px; border-bottom:1px solid var(--hair);}
+  .nav-logo{font-family:'Bebas Neue', sans-serif; font-size:26px; letter-spacing:0.04em;}
+  .nav-logo span{color:var(--lime);}
+  .nav-links{display:flex; gap:44px; list-style:none;}
+  .nav-links a{font-size:13px; letter-spacing:0.14em; text-transform:uppercase; position:relative; padding-bottom:5px;}
+  .nav-links a::after{content:""; position:absolute; left:0; bottom:0; width:0; height:1px; background:var(--lime); transition:width .3s var(--ease);}
+  .nav-links a:hover::after{width:100%;}
+  .nav-toggle{display:none; flex-direction:column; gap:5px; cursor:pointer; background:none; border:none;}
+  .nav-toggle span{width:24px; height:1px; background:var(--white);}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative; min-height:100vh;
+    display:grid; grid-template-columns:1.15fr 0.85fr;
+    align-items:end;
+    padding:150px 0 0 48px;
+    border-bottom:1px solid var(--hair);
+    overflow:hidden;
+  }
+  .hero-left{position:relative; z-index:2;}
+  .hero-eyebrow{font-size:12px; letter-spacing:0.22em; color:var(--lime); margin-bottom:20px; display:flex; align-items:center; gap:12px;}
+  .hero-eyebrow::before{content:""; width:24px; height:1px; background:var(--lime);}
+  .hero-title{font-size:clamp(110px, 16vw, 280px); line-height:0.78; white-space:nowrap;}
+  .hero-title .l2{color:var(--black); -webkit-text-stroke:2px var(--white); margin-left:6vw;}
+  .hero-cta-row{display:flex; align-items:center; gap:28px; margin:44px 0 90px;}
+  .cta{
+    display:inline-flex; align-items:center; gap:12px;
+    background:var(--lime); color:var(--black);
+    padding:17px 34px; font-family:'JetBrains Mono', monospace;
+    font-size:12px; letter-spacing:0.16em; text-transform:uppercase; font-weight:500;
+    border:1px solid var(--lime);
+    transition:background .25s var(--ease), color .25s var(--ease);
+  }
+  .cta:hover{background:var(--black); color:var(--lime);}
+  .cta-outline{background:none; color:var(--white); border:1px solid var(--white);}
+  .cta-outline:hover{background:var(--white); color:var(--black);}
+  .hero-panel{
+    position:relative; align-self:stretch; margin-right:48px;
+    display:flex; align-items:flex-end;
+  }
+  .photo-panel{
+    position:relative; width:100%; aspect-ratio:3/4; overflow:hidden;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(174,234,0,0.10), transparent 55%),
+      linear-gradient(160deg, #050505 0%, #000 60%);
+    border:1px solid var(--hair);
+  }
+  .photo-panel svg.noise{position:absolute; inset:0; width:100%; height:100%; opacity:0.5; mix-blend-mode:overlay;}
+  .photo-panel .garment{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;}
+  .photo-panel .garment svg{width:52%; height:52%;}
+  .photo-tag{position:absolute; top:20px; left:20px; font-size:10px; color:rgba(255,255,255,0.5);}
+  .photo-corner{position:absolute; width:18px; height:18px; border:1px solid var(--lime);}
+  .pc-tl{top:-1px; left:-1px; border-right:none; border-bottom:none;}
+  .pc-br{bottom:-1px; right:-1px; border-left:none; border-top:none;}
+
+  /* ---------- MARQUEE CTA BANNER ---------- */
+  .cta-banner{
+    background:var(--black); border-bottom:1px solid var(--hair);
+    padding:34px 48px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:18px;
+  }
+  .cta-banner .line{font-family:'Bebas Neue', sans-serif; font-size:clamp(22px,3vw,34px); letter-spacing:0.02em;}
+  .cta-banner .line em{color:var(--lime); font-style:normal;}
+  .cta-banner a{font-size:12px; letter-spacing:0.14em; text-transform:uppercase; font-family:'JetBrains Mono', monospace; border-bottom:1px solid var(--lime); color:var(--lime); padding-bottom:3px;}
+
+  /* ---------- SECTION ---------- */
+  .section{padding:140px 48px; border-bottom:1px solid var(--hair);}
+  .section-head{margin-bottom:70px;}
+  .section-eyebrow{font-size:12px; letter-spacing:0.2em; color:rgba(255,255,255,0.55); display:block; margin-bottom:16px;}
+  .section-eyebrow em{color:var(--lime); font-style:normal;}
+  .section-title{font-size:clamp(44px,6vw,80px); line-height:0.9;}
+
+  /* ---------- FEATURED DROPS ---------- */
+  .drops-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--hair-soft);}
+  .drop-card{background:var(--black); padding:0; position:relative;}
+  .drop-card .photo-panel{aspect-ratio:3/4; border:none; border-radius:0; transition:transform .2s var(--ease); transform:scale(1); }
+  .drop-card:hover .photo-panel{transform:scale(1.03);}
+  .drop-card .photo-panel{outline:1px solid var(--hair); outline-offset:-1px;}
+  .drop-card:hover .photo-panel{outline-color:var(--lime);}
+  .drop-meta{padding:20px 4px;}
+  .drop-name{font-size:16px; font-weight:500;}
+  .drop-price{font-family:'JetBrains Mono', monospace; font-size:13px; color:var(--lime); margin-top:6px;}
+
+  /* ---------- BRAND STATEMENT ---------- */
+  .statement{padding:170px 48px; text-align:center;}
+  .statement h2{font-size:clamp(38px, 7vw, 100px); line-height:0.95; max-width:1200px; margin:0 auto;}
+  .statement h2 em{color:var(--lime); font-style:normal;}
+
+  /* ---------- EDITORIAL CATEGORY ROWS (asymmetric, no icon grid) ---------- */
+  .cat-row{
+    display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:60px;
+    padding:90px 0; border-bottom:1px solid var(--hair);
+  }
+  .cat-row:last-child{border-bottom:none;}
+  .cat-row.rev .cat-copy{order:2;}
+  .cat-row.rev .cat-photo{order:1;}
+  .cat-index{font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--lime); margin-bottom:18px; display:block;}
+  .cat-title{font-size:clamp(48px,7vw,120px); line-height:0.85; margin-bottom:22px;}
+  .cat-copy p{color:rgba(255,255,255,0.6); font-size:15px; max-width:360px; line-height:1.7; margin-bottom:30px;}
+  .cat-photo .photo-panel{aspect-ratio:4/5;}
+
+  /* ---------- FOOTER ---------- */
+  .footer{padding:70px 48px 40px;}
+  .footer-row{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:24px; padding-bottom:40px; border-bottom:1px solid var(--hair);}
+  .footer-logo{font-family:'Bebas Neue', sans-serif; font-size:24px;}
+  .footer-logo span{color:var(--lime);}
+  .footer-links{display:flex; gap:36px; list-style:none; flex-wrap:wrap;}
+  .footer-links a{font-size:13px; letter-spacing:0.1em; text-transform:uppercase; transition:color .2s;}
+  .footer-links a:hover{color:var(--lime);}
+  .footer-social{display:flex; gap:26px;}
+  .footer-social a{font-size:13px; letter-spacing:0.1em; text-transform:uppercase; transition:color .2s;}
+  .footer-social a:hover{color:var(--lime);}
+  .footer-bottom{margin-top:30px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; font-family:'JetBrains Mono', monospace; font-size:11px; color:rgba(255,255,255,0.4);}
+
+  @media (max-width:900px){
+    .nav-links{display:none;}
+    .nav-toggle{display:flex;}
+    .hero{grid-template-columns:1fr; padding:130px 24px 0;}
+    .hero-panel{margin-right:0; margin-top:50px;}
+    .hero-title{white-space:normal;}
+    .hero-title .l2{margin-left:0;}
+    .drops-grid{grid-template-columns:repeat(2,1fr);}
+    .cat-row{grid-template-columns:1fr;}
+    .cat-row.rev .cat-copy{order:1;} .cat-row.rev .cat-photo{order:2;}
+    .section, .footer{padding-left:24px; padding-right:24px;}
+    .cta-banner{padding:28px 24px;}
+  }
+  @media (prefers-reduced-motion: reduce){*{animation:none !important; transition:none !important;}}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="nav-logo">HEY <span>SHEY</span></div>
+  <ul class="nav-links">
+    <li><a href="#shop">Shop</a></li>
+    <li><a href="#lookbook">Lookbook</a></li>
+    <li><a href="#about">About</a></li>
+  </ul>
+  <button class="nav-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow mono">SS26 — DROP 004</div>
+    <h1 class="hero-title display">
+      <div>HEY</div>
+      <div class="l2">SHEY</div>
+    </h1>
+    <div class="hero-cta-row">
+      <a href="#shop" class="cta">Shop now</a>
+    </div>
+  </div>
+  <div class="hero-panel">
+    <div class="photo-panel">
+      <div class="photo-corner pc-tl"></div>
+      <div class="photo-corner pc-br"></div>
+      <div class="photo-tag mono">CAMPAIGN — SS26</div>
+      <svg class="noise" viewBox="0 0 200 260"><filter id="n1"><feTurbulence baseFrequency="0.9" numOctaves="2" result="t"/><feColorMatrix in="t" type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n1)" opacity="0.18"/></svg>
+      <div class="garment">
+        <svg viewBox="0 0 100 100" fill="none" stroke="#AEEA00" stroke-width="1.2">
+          <path d="M30 20 L40 12 L60 12 L70 20 L84 28 L76 42 L68 36 L68 92 L32 92 L32 36 L24 42 L16 28 Z"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner reveal">
+  <div class="line">NEW DROP. <em>LIMITED.</em></div>
+  <a href="#shop">Shop the drop →</a>
+</div>
+
+<!-- FEATURED DROPS -->
+<section class="section" id="shop">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="section-eyebrow mono">FEATURED <em>DROPS</em></span>
+      <h2 class="section-title display">This Week</h2>
+    </div>
+    <div class="drops-grid reveal">
+      <div class="drop-card">
+        <div class="photo-panel">
+          <svg class="noise" viewBox="0 0 200 260"><filter id="n2"><feTurbulence baseFrequency="0.9" numOctaves="2" result="t"/><feColorMatrix in="t" type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n2)" opacity="0.15"/></svg>
+          <div class="garment"><svg viewBox="0 0 100 100" fill="none" stroke="#AEEA00" stroke-width="1.2"><path d="M30 22 L38 14 L62 14 L70 22 L86 32 L78 46 L70 40 L70 92 L30 92 L30 40 L22 46 L14 32 Z"/><circle cx="50" cy="26" r="6"/></svg></div>
+        </div>
+        <div class="drop-meta"><div class="drop-name">Shadow Hoodie</div><div class="drop-price">$140</div></div>
+      </div>
+      <div class="drop-card">
+        <div class="photo-panel">
+          <svg class="noise" viewBox="0 0 200 260"><filter id="n3"><feTurbulence baseFrequency="0.9" numOctaves="2" result="t"/><feColorMatrix in="t" type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n3)" opacity="0.15"/></svg>
+          <div class="garment"><svg viewBox="0 0 100 100" fill="none" stroke="#AEEA00" stroke-width="1.2"><path d="M28 14 H72 V30 L64 90 H54 L50 44 L46 90 H36 L28 30 Z"/><rect x="60" y="46" width="14" height="18"/></svg></div>
+        </div>
+        <div class="drop-meta"><div class="drop-name">Utility Cargo</div><div class="drop-price">$165</div></div>
+      </div>
+      <div class="drop-card">
+        <div class="photo-panel">
+          <svg class="noise" viewBox="0 0 200 260"><filter id="n4"><feTurbulence baseFrequency="0.9" numOctaves="2" result="t"/><feColorMatrix in="t" type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n4)" opacity="0.15"/></svg>
+          <div class="garment"><svg viewBox="0 0 100 100" fill="none" stroke="#AEEA00" stroke-width="1.2"><path d="M24 30 L38 16 L62 16 L76 30 L88 40 L78 54 L70 46 L70 90 L30 90 L30 46 L22 54 L12 40 Z"/></svg></div>
+        </div>
+        <div class="drop-meta"><div class="drop-name">Flight Bomber</div><div class="drop-price">$240</div></div>
+      </div>
+      <div class="drop-card">
+        <div class="photo-panel">
+          <svg class="noise" viewBox="0 0 200 260"><filter id="n5"><feTurbulence baseFrequency="0.9" numOctaves="2" result="t"/><feColorMatrix in="t" type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n5)" opacity="0.15"/></svg>
+          <div class="garment"><svg viewBox="0 0 100 100" fill="none" stroke="#AEEA00" stroke-width="1.2"><path d="M18 52 C18 34 32 24 50 24 C68 24 82 34 82 52 L82 56 L18 56 Z"/><path d="M18 56 L14 60 L86 60 L82 56"/></svg></div>
+        </div>
+        <div class="drop-meta"><div class="drop-name">Low Cap</div><div class="drop-price">$55</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BRAND STATEMENT -->
+<section class="statement reveal">
+  <h2 class="display">Streetwear that doesn't ask for <em>your attention.</em></h2>
+</section>
+
+<!-- CATEGORY EDITORIAL ROWS -->
+<section id="lookbook">
+  <div class="wrap">
+    <div class="cat-row reveal">
+      <div class="cat-copy">
+        <span class="cat-index mono">01 — OUTERWEAR</span>
+        <h3 class="cat-title display">Jackets</h3>
+        <p>Cut for weather, worn for silhouette. Bombers and shells built with the same restraint as everything else.</p>
+        <a href="#" class="cta cta-outline">View outerwear</a>
+      </div>
+      <div class="cat-photo">
+        <div class="photo-panel">
+          <svg class="noise" viewBox="0 0 200 260"><filter id="n6"><feTurbulence baseFrequency="0.9" numOctaves="2" result="t"/><feColorMatrix in="t" type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n6)" opacity="0.15"/></svg>
+          <div class="garment"><svg viewBox="0 0 100 100" fill="none" stroke="#AEEA00" stroke-width="1.2"><path d="M20 26 L34 16 L50 16 L66 26 L82 36 L74 50 L66 44 L66 92 L34 92 L34 44 L26 50 L18 36 Z"/></svg></div>
+        </div>
+      </div>
+    </div>
+    <div class="cat-row rev reveal">
+      <div class="cat-copy">
+        <span class="cat-index mono">02 — TOPS</span>
+        <h3 class="cat-title display">Tees &amp; Hoodies</h3>
+        <p>Heavyweight cotton, boxed fits. The pieces you reach for without thinking twice.</p>
+        <a href="#" class="cta cta-outline">View tops</a>
+      </div>
+      <div class="cat-photo">
+        <div class="photo-panel">
+          <svg class="noise" viewBox="0 0 200 260"><filter id="n7"><feTurbulence baseFrequency="0.9" numOctaves="2" result="t"/><feColorMatrix in="t" type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n7)" opacity="0.15"/></svg>
+          <div class="garment"><svg viewBox="0 0 100 100" fill="none" stroke="#AEEA00" stroke-width="1.2"><path d="M30 20 L40 12 L60 12 L70 20 L84 28 L76 42 L68 36 L68 90 L32 90 L32 36 L24 42 L16 28 Z"/></svg></div>
+        </div>
+      </div>
+    </div>
+    <div class="cat-row reveal">
+      <div class="cat-copy">
+        <span class="cat-index mono">03 — BOTTOMS</span>
+        <h3 class="cat-title display">Cargo &amp; Denim</h3>
+        <p>Utility details, straight through the leg. Built to move, styled to stand still.</p>
+        <a href="#" class="cta cta-outline">View bottoms</a>
+      </div>
+      <div class="cat-photo">
+        <div class="photo-panel">
+          <svg class="noise" viewBox="0 0 200 260"><filter id="n8"><feTurbulence baseFrequency="0.9" numOctaves="2" result="t"/><feColorMatrix in="t" type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n8)" opacity="0.15"/></svg>
+          <div class="garment"><svg viewBox="0 0 100 100" fill="none" stroke="#AEEA00" stroke-width="1.2"><path d="M28 14 H72 V30 L64 90 H54 L50 44 L46 90 H36 L28 30 Z"/></svg></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer" id="about">
+  <div class="wrap">
+    <div class="footer-row">
+      <div class="footer-logo">HEY <span>SHEY</span></div>
+      <ul class="footer-links">
+        <li><a href="#shop">Shop</a></li>
+        <li><a href="#lookbook">Lookbook</a></li>
+        <li><a href="#about">About</a></li>
+      </ul>
+      <div class="footer-social">
+        <a href="#">Instagram</a>
+        <a href="#">TikTok</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 HEY SHEY. ALL RIGHTS RESERVED.</span>
+      <span>BLACK &amp; LIME. NO EXCEPTIONS.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  });
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
